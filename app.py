@@ -243,5 +243,17 @@ def results(prediction_id):
                          class_info=class_info,
                          class_descriptions=CLASS_DESCRIPTIONS)
 
+@app.route('/history')
+@login_required
+def history():
+    page = request.args.get('page', 1, type=int)
+    predictions = Prediction.query.filter_by(user_id=current_user.id)\
+        .order_by(Prediction.created_at.desc())\
+        .paginate(page=page, per_page=10)
+    
+    return render_template('history.html', 
+                         predictions=predictions,
+                         class_descriptions=CLASS_DESCRIPTIONS)
+
 
 

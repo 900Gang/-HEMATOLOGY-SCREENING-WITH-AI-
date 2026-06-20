@@ -224,3 +224,24 @@ def detect():
     
     return render_template('detect.html')
 
+
+@app.route('/results/<int:prediction_id>')
+@login_required
+def results(prediction_id):
+    prediction = Prediction.query.get_or_404(prediction_id)
+    
+    if prediction.user_id != current_user.id:
+        flash('Access denied', 'danger')
+        return redirect(url_for('dashboard'))
+    
+    all_probs = json.loads(prediction.all_probabilities) if prediction.all_probabilities else {}
+    class_info = CLASS_DESCRIPTIONS.get(prediction.prediction, {})
+    
+    return render_template('results.html', 
+                         prediction=prediction, 
+                         all_probs=all_probs,
+                         class_info=class_info,
+                         class_descriptions=CLASS_DESCRIPTIONS)
+
+
+

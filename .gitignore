@@ -1,0 +1,55 @@
+.ipynb_checkpoints
+serviceAccountKey.json
+.venv
+.venv-1
+.venv-2
+emotiondetector.json
+# Ignore Firebase Credentials
+serviceAccountKey.json
+
+# Ignore Python Virtual Environments
+.venv/
+.venv-2/
+__pycache__/
+
+# Ignore Flutter build files
+build/
+.dart_tool/
+.packages
+# --- Python ---
+.venv/
+.venv-2/
+venv/
+env/
+__pycache__/
+*.pyc
+
+# --- Security ---
+serviceAccountKey.json
+
+# --- Flutter ---
+build/
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# --- Heavy Media & Data ---
+*.mp4
+*.avi
+*.mov
+student_monitoring_data.csv
+# Python Environments
+.ven-1/
+.ven-2/
+bridge_env/
+
+# Flutter Cache
+build/
+.dart_tool/
+
+# Heavy Datasets
+images/
+
+# Security
+serviceAccountKey.json

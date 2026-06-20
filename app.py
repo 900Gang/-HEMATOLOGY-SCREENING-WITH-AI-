@@ -255,5 +255,29 @@ def history():
                          predictions=predictions,
                          class_descriptions=CLASS_DESCRIPTIONS)
 
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        current_user.first_name = request.form.get('first_name')
+        current_user.last_name = request.form.get('last_name')
+        current_user.email = request.form.get('email')
+        
+        new_password = request.form.get('new_password')
+        if new_password:
+            current_password = request.form.get('current_password')
+            if current_user.check_password(current_password):
+                current_user.set_password(new_password)
+            else:
+                flash('Current password is incorrect', 'danger')
+                return redirect(url_for('profile'))
+        
+        db.session.commit()
+        flash('Profile updated successfully!', 'success')
+    
+    return render_template('profile.html')
+
+
+
 
 

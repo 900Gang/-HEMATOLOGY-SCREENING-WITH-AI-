@@ -80,3 +80,17 @@ def preprocess_image(image_path, target_size=(224, 224)):
     img = img.astype('float32') / 255.0
     img = np.expand_dims(img, axis=0)
     return img
+
+def predict_image(image_path):
+    if model is None:
+        return None, None, None
+    
+    img = preprocess_image(image_path)
+    predictions = model.predict(img)
+    predicted_class_idx = np.argmax(predictions[0])
+    confidence = float(predictions[0][predicted_class_idx]) * 100
+    predicted_class = CLASS_LABELS[predicted_class_idx]
+    
+    all_probs = {CLASS_LABELS[i]: float(predictions[0][i]) * 100 for i in range(len(CLASS_LABELS))}
+    
+    return predicted_class, confidence, all_probs

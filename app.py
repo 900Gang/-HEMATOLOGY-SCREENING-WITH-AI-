@@ -181,4 +181,46 @@ def dashboard():
                          total_predictions=total_predictions,
                          class_info=CLASS_DESCRIPTIONS)
 
+@app.route('/detect', methods=['GET', 'POST'])
+@login_required
+def detect():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file selected', 'danger')
+            return redirect(request.url)
+        
+        file = request.files['file']
+        
+        if file.filename == '':
+            flash('No file selected', 'danger')
+            return redirect(request.url)
+        
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = f"{current_user.id}_{timestamp}_{filename}"
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            
+            predicted_class, confidence, all_probs = predict_image(filepath)
+            
+            if predicted_class is None:
+                flash('Error making prediction. Please try again.', 'danger')
+                return redirect(request.url)
+            
+            prediction = Prediction(
+                user_id=current_user.id,
+                image_path=filename,
+                prediction=predicted_class,
+                confidence=confidence,
+                all_probabilities=json.dumps(all_probs)
+            )
+            db.session.add(prediction)
+            db.session.commit()
+            
+            return redirect(url_for('results', prediction_id=prediction.id))
+        else:
+            flash('Invalid file type. Please upload an image file.', 'danger')
+    
+    return render_template('detect.html')
 

@@ -168,6 +168,17 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('landing'))
 
-
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    recent_predictions = Prediction.query.filter_by(user_id=current_user.id)\
+        .order_by(Prediction.created_at.desc()).limit(5).all()
+    
+    total_predictions = Prediction.query.filter_by(user_id=current_user.id).count()
+    
+    return render_template('dashboard.html', 
+                         recent_predictions=recent_predictions,
+                         total_predictions=total_predictions,
+                         class_info=CLASS_DESCRIPTIONS)
 
 

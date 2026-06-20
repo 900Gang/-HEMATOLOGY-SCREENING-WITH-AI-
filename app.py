@@ -12,3 +12,17 @@ from models import db, User, Prediction
 
 import tensorflow as tf
 from tensorflow.keras.models import load_model
+
+app = Flask(__name__)
+app.config.from_object(Config)
+
+db.init_app(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
+
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+MODEL_PATH = 'best_cnn_model.h5'
+model = None

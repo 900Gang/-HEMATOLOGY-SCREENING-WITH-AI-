@@ -63,3 +63,20 @@ CLASS_DESCRIPTIONS = {
         'color': '#f39c12'
     }
 }
+
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+def preprocess_image(image_path, target_size=(224, 224)):
+    img = cv2.imread(image_path)
+    img = cv2.resize(img, target_size)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = img.astype('float32') / 255.0
+    img = np.expand_dims(img, axis=0)
+    return img

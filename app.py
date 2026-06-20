@@ -12,3 +12,54 @@ from models import db, User, Prediction
 
 import tensorflow as tf
 from tensorflow.keras.models import load_model
+
+app = Flask(__name__)
+app.config.from_object(Config)
+
+db.init_app(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
+
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+MODEL_PATH = 'best_cnn_model.h5'
+model = None
+
+def load_trained_model():
+    global model
+    try:
+        model = load_model(MODEL_PATH)
+        print("Model loaded successfully!")
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        model = None
+
+CLASS_LABELS = ['anemia', 'normal', 'sickle', 'thalas']
+CLASS_DESCRIPTIONS = {
+    'anemia': {
+        'name': 'Anemia',
+        'description': 'A condition in which you lack enough healthy red blood cells to carry adequate oxygen to your body\'s tissues.',
+        'symptoms': ['Fatigue', 'Weakness', 'Pale skin', 'Shortness of breath', 'Dizziness'],
+        'color': '#e74c3c'
+    },
+    'normal': {
+        'name': 'Normal',
+        'description': 'The blood cells appear healthy and normal with no signs of any blood disorders.',
+        'symptoms': ['No symptoms - Healthy blood cells'],
+        'color': '#27ae60'
+    },
+    'sickle': {
+        'name': 'Sickle Cell Disease',
+        'description': 'A group of inherited red blood cell disorders where red blood cells become hard and sticky and look like a C-shaped farm tool called a "sickle".',
+        'symptoms': ['Anemia', 'Pain episodes', 'Swelling', 'Frequent infections', 'Delayed growth'],
+        'color': '#9b59b6'
+    },
+    'thalas': {
+        'name': 'Thalassemia',
+        'description': 'An inherited blood disorder that causes your body to have less hemoglobin than normal.',
+        'symptoms': ['Fatigue', 'Weakness', 'Pale or yellowish skin', 'Bone deformities', 'Slow growth'],
+        'color': '#f39c12'
+    }
+}

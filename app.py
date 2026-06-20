@@ -26,3 +26,14 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 MODEL_PATH = 'best_cnn_model.h5'
 model = None
+
+def load_trained_model():
+    global model
+    try:
+        model = load_model(MODEL_PATH)
+        print("Model loaded successfully!")
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        model = None
+
+        

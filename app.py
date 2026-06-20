@@ -277,6 +277,30 @@ def profile():
     
     return render_template('profile.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html', class_descriptions=CLASS_DESCRIPTIONS)
+
+@app.route('/delete_prediction/<int:prediction_id>', methods=['POST'])
+@login_required
+def delete_prediction(prediction_id):
+    prediction = Prediction.query.get_or_404(prediction_id)
+    
+    if prediction.user_id != current_user.id:
+        flash('Access denied', 'danger')
+        return redirect(url_for('history'))
+    
+    try:
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], prediction.image_path))
+    except:
+        pass
+    
+    db.session.delete(prediction)
+    db.session.commit()
+    flash('Prediction deleted successfully', 'success')
+    
+    return redirect(url_for('history'))
+
 
 
 

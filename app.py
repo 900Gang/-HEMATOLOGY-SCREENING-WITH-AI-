@@ -301,7 +301,21 @@ def delete_prediction(prediction_id):
     
     return redirect(url_for('history'))
 
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('error.html', error_code=404, error_message="Page Not Found"), 404
 
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('error.html', error_code=500, error_message="Internal Server Error"), 500
+
+with app.app_context():
+    db.create_all()
+    load_trained_model()
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
 
 
 
